@@ -80,14 +80,23 @@ public class KanjiVgLoader
 
                 // Check if code point is actually a CJK ideograph
                 String kanjiString = new String(Character.toChars(codePoint));
-                if((codePoint >= 0x3041 && codePoint <= 0x30fa)
+                if((codePoint >= 0x3041 && codePoint <= 0x3096)
                     || (codePoint >= 0x4e00 && codePoint <= 0x9fff)
                     || (codePoint >= 0x3400 && codePoint <= 0x4dff)
                     || (codePoint >= 0x20000 && codePoint <= 0x2a6df)
                     || (codePoint >= 0xf900 && codePoint <= 0xfaff)
                     || (codePoint >= 0x2f800 && codePoint <= 0x2fa1f))
                 {
-                    current = new KanjiInfo(kanjiString);
+                    // Some exceptions that we don't want.
+                    if (codePoint == 0x4ebb || // イ
+                        codePoint == 0x53b6 || // 厶
+                        codePoint == 0x2008a || // ク
+                        codePoint == 0x30bf || // タ
+                        codePoint == 0x56d7 || // ロ
+                        codePoint == 0x5202) // リ
+                        return;
+                    else
+                        current = new KanjiInfo(kanjiString);
                 }
                 else
                 {
