@@ -62,10 +62,17 @@ public class KanjiVgLoader
                     warnings.add("<kanji> tag missing id=");
                     return;
                 }
+                int indexOfUnderscore = id.indexOf("_");
+                if(indexOfUnderscore == -1)
+                {
+                    warnings.add("Id with wrong format id= (" + id + ")");
+                    return;
+                }
+                String codePointStr = id.substring(indexOfUnderscore + 1);
                 int codePoint;
                 try
                 {
-                    codePoint = Integer.parseInt(id, 16);
+                    codePoint = Integer.parseInt(codePointStr, 16);
                 }
                 catch(NumberFormatException e)
                 {
@@ -104,15 +111,15 @@ public class KanjiVgLoader
                     return;
                 }
             }
-            else if(qName.equals("stroke"))
+            else if(qName.equals("path"))
             {
                 if(current != null)
                 {
-                    String path = attributes.getValue("path");
+                    String path = attributes.getValue("d");
                     if(path == null)
                     {
-                        warnings.add("<stroke> tag in kanji " +
-                            current.getKanji() + " missing path=, ignoring kanji");
+                        warnings.add("<path> tag in kanji " +
+                            current.getKanji() + " missing d=, ignoring kanji");
                         current = null;
                         return;
                     }
@@ -123,8 +130,8 @@ public class KanjiVgLoader
                     }
                     catch(IllegalArgumentException e)
                     {
-                        warnings.add("<stroke> tag in kanji " + current.getKanji() +
-                            " invalid path= (" + path + "): " + e.getMessage());
+                        warnings.add("<path> tag in kanji " + current.getKanji() +
+                            " invalid d= (" + path + "): " + e.getMessage());
                         current = null;
                         return;
                     }
