@@ -1,75 +1,88 @@
 <project name="kanjirecog" default="all" basedir=".">
 
-	<description>
-		Builds jar files for kanjirecog library.
-	</description>
+    <description>
+        Builds jar files for kanjirecog library.
+    </description>
 
-	<!-- Build folder (will be deleted on run!) -->
-	<property name="build" location="${java.io.tmpdir}/build/kanjirecog" />
+    <!-- Build folder (will be deleted on run!) -->
+    <property name="build" location="${java.io.tmpdir}/build/kanjirecog" />
 
-	<!-- Where to put the jars when they're built -->
-	<property name="jarfolder" location="${user.home}/Desktop" />
+    <!-- Where to put the jars when they're built -->
+    <property name="jarfolder" location="${user.home}/Desktop" />
 
-	<!-- Version number -->
-	<property name="version" value="1.0.0"/>
+    <!-- Version number -->
+    <property name="version" value="1.0.0"/>
 
-	<!-- Init build folders -->
-	<target name="init">
-		<delete dir="${build}" />
-		<mkdir dir="${build}" />
-	</target>
+    <!-- Init build folders -->
+    <target name="init">
+        <delete dir="${build}" />
+        <mkdir dir="${build}" />
+    </target>
 
-	<!-- Compile Java source and write the version file -->
-	<target name="compile" depends="init">
-		<mkdir dir="${build}/classes" />
-		<javac destdir="${build}/classes"
-			source="1.6" target="1.6" encoding="UTF-8" debug="true">
-			<src>
-			  <pathelement path="src"/>
-			</src>
-		</javac>
-		<copy todir="${build}/classes">
-		  <fileset dir="src">
-		  	<exclude name="**/*.java" />
-		  </fileset>
-		</copy>
-		<copy todir="${build}/classes/com/leafdigital/kanji">
-		  <fileset dir="data">
-		  	<include name="strokes-20100823.xml" />
-		  </fileset>
-		</copy>
-		
-	</target>
+    <!-- Compile Java source and write the version file -->
+    <target name="compile" depends="init">
+        <mkdir dir="${build}/classes" />
+        <javac destdir="${build}/classes"
+            source="1.6" target="1.6" encoding="UTF-8" debug="true">
+            <src>
+              <pathelement path="src"/>
+            </src>
+        </javac>
+        <copy todir="${build}/classes">
+          <fileset dir="src">
+            <exclude name="**/*.java" />
+          </fileset>
+        </copy>
+        <copy todir="${build}/classes/com/leafdigital/kanji">
+          <fileset dir="data">
+            <include name="strokes-20100823.xml" />
+          </fileset>
+        </copy>
+        
+    </target>
 
-	<!-- Build jar file -->
-	<target name="jar" depends="compile">
-		<mkdir dir="${build}/output" />
-		<jar jarfile="${build}/output/kanjirecog.${version}.jar" level="9">
-			<fileset dir="${build}/classes">
-				<include name="com/leafdigital/kanji/**"/>
-				<exclude name="com/leafdigital/kanji/example/"/>
-			</fileset>
-		</jar>
-	</target>
-	
-	<!-- Build javadoc jar file -->
-	<target name="javadoc" depends="compile">
-		<mkdir dir="${build}/doc"/>
-		<javadoc sourcepath="src" destdir="${build}/doc">
-			<package name="com.leafdigital.kanji" />
-		</javadoc>
-		<jar jarfile="${build}/output/kanjirecog.${version}.javadoc.jar"
-			basedir="${build}/doc"
-			level="9"/>
-	</target>
+    <!-- Build jar file -->
+    <target name="jar" depends="compile">
+        <mkdir dir="${build}/output" />
+        <jar jarfile="${build}/output/kanjirecog.${version}.jar" level="9">
+            <fileset dir="${build}/classes">
+                <include name="com/leafdigital/kanji/**"/>
+                <exclude name="com/leafdigital/kanji/example/"/>
+            </fileset>
+        </jar>
+    </target>
+    
+    <target name="jar-with-example" depends="compile">
+        <mkdir dir="${build}/output" />
+        <jar jarfile="${build}/output/kanjirecog.${version}.jar" level="9">
+            <fileset dir="${build}/classes">
+                <include name="com/leafdigital/kanji/**"/>
+            </fileset>
+        </jar>
+    </target>
+    
+    <!-- Build javadoc jar file -->
+    <target name="javadoc" depends="compile">
+        <mkdir dir="${build}/doc"/>
+        <javadoc sourcepath="src" destdir="${build}/doc">
+            <package name="com.leafdigital.kanji" />
+        </javadoc>
+        <jar jarfile="${build}/output/kanjirecog.${version}.javadoc.jar"
+            basedir="${build}/doc"
+            level="9"/>
+    </target>
 
-	<!-- Move jar files to final location and make distribution zip -->
-	<target name="all" depends="jar, javadoc">
-		<!-- Delete and recopy jar files -->
-		<delete file="${jarfolder}/kanjirecog.${version}.jar"/>
-		<copy file="${build}/output/kanjirecog.${version}.jar" todir="${jarfolder}" />
-		<delete file="${jarfolder}/kanjirecog.${version}.javadoc.jar"/>
-		<copy file="${build}/output/kanjirecog.${version}.javadoc.jar" todir="${jarfolder}" />
-	</target>
-	
+    <!-- Move jar files to final location and make distribution zip -->
+    <target name="all" depends="jar, javadoc">
+        <!-- Delete and recopy jar files -->
+        <delete file="${jarfolder}/kanjirecog.${version}.jar"/>
+        <copy file="${build}/output/kanjirecog.${version}.jar" todir="${jarfolder}" />
+        <delete file="${jarfolder}/kanjirecog.${version}.javadoc.jar"/>
+        <copy file="${build}/output/kanjirecog.${version}.javadoc.jar" todir="${jarfolder}" />
+    </target>
+
+    <target name="run-example" depends="jar-with-example">
+        <java classpath="${build}/output/kanjirecog.${version}.jar" classname="com.leafdigital.kanji.example.ExampleApp" spawn="false" fork="true"/>
+    </target>
+
 </project>
