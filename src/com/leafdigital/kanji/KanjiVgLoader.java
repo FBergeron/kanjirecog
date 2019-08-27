@@ -93,7 +93,18 @@ public class KanjiVgLoader
                     || (codePoint >= 0xf900 && codePoint <= 0xfaff)
                     || (codePoint >= 0x2f800 && codePoint <= 0x2fa1f))
                 {
-                    current = new KanjiInfo(kanjiString);
+                    // Some exceptions that we don't want.
+                    if(codePoint == 0x4ebb || // 亻
+                        codePoint == 0x535c || // 卜
+                        codePoint == 0x793b || // 礻
+                        codePoint == 0x4e3f || // 丿
+                        codePoint == 0x53b6 || // 厶
+                        codePoint == 0x5302 || // 刂
+                        codePoint == 0x513f || // 儿
+                        codePoint == 0x56d7) // 囗
+                        return;
+                    else
+                        current = new KanjiInfo(kanjiString);
                 }
                 else
                 {
